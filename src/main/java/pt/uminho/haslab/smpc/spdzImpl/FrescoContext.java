@@ -1,6 +1,5 @@
 package pt.uminho.haslab.smpc.spdzImpl;
 
-import dk.alexandra.fresco.framework.Party;
 import dk.alexandra.fresco.framework.ProtocolEvaluator;
 import dk.alexandra.fresco.framework.builder.ProtocolBuilder;
 import dk.alexandra.fresco.framework.builder.numeric.field.BigIntegerFieldDefinition;
@@ -11,6 +10,7 @@ import dk.alexandra.fresco.framework.sce.evaluator.BatchedProtocolEvaluator;
 import dk.alexandra.fresco.framework.sce.evaluator.EvaluationStrategy;
 import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
 import dk.alexandra.fresco.framework.util.AesCtrDrbg;
+import dk.alexandra.fresco.framework.util.Drbg;
 import dk.alexandra.fresco.framework.util.ModulusFinder;
 import dk.alexandra.fresco.suite.ProtocolSuite;
 import dk.alexandra.fresco.suite.spdz.SpdzProtocolSuite;
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class FrescoContext <ResourcePoolT extends ResourcePool, BuilderT extends ProtocolBuilder>  {
 
@@ -41,7 +42,7 @@ public class FrescoContext <ResourcePoolT extends ResourcePool, BuilderT extends
         SpdzDataSupplier supplier = new SpdzDummyDataSupplier(playerId, nplayers,
                 new BigIntegerFieldDefinition(modulus), modulus);
         resourcePool = (ResourcePoolT) new SpdzResourcePoolImpl(playerId, nplayers, new SpdzOpenedValueStoreImpl(), supplier,
-                new AesCtrDrbg(new byte[32]));
+                (Function<byte[], Drbg>) new AesCtrDrbg(new byte[32]));
 
         EvaluationStrategy evalStrategy = EvaluationStrategy.SEQUENTIAL_BATCHED;
         BatchEvaluationStrategy<ResourcePoolT> stat = evalStrategy.getStrategy();
